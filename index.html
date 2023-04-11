@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<meta charset="UTF-8" />
+<html>
+  <head>
+    <title>じゃんけんゲーム</title>
+    <style>
+      .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .game-board {
+        text-align: center;
+      }
+
+      .game-status {
+        margin-bottom: 20px;
+      }
+
+      .btn {
+        display: inline-block;
+        margin-right: 10px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="game-board">
+        <h1>じゃんけんとは一体</h1>
+        <div class="game-status">
+          <p>Player 1 HP: <span id="player1-hp">50</span></p>
+          <p>Player 2 HP: <span id="player2-hp">50</span></p>
+        </div>
+        <div id="hands">
+          <button class="btn" onclick="chooseHand('✊')">✊</button>
+          <button class="btn" onclick="chooseHand('✋')">✋</button>
+          <button class="btn" onclick="chooseHand('✌')">✌</button>
+          <button class="btn" onclick="useSpecial()">特殊技</button>
+        </div>
+        <p id="special"></p>
+        <p id="player2Hand"></p>
+        <p id="result"></p>
+      </div>
+    </div>
+
+    <script>
+      let player1Hp = 50;
+      let player2Hp = 50;
+
+      // プレイヤー1とプレイヤー2のHPを表示する関数
+      function displayHP() {
+        document.getElementById("player1-hp").textContent = player1Hp;
+        document.getElementById("player2-hp").textContent = player2Hp;
+      }
+
+      // じゃんけんの手を選択した時に実行される関数
+      function chooseHand(hand) {
+        // プレイヤー2の手をランダムに選択
+        const hands = ["✊", "✋", "✌"];
+        const player2Hand = hands[Math.floor(Math.random() * hands.length)];
+
+        // 勝敗を判定
+        const result = judgeResult(hand, player2Hand);
+
+        // プレイヤー1とプレイヤー2のHPを更新
+        updateHP(result);
+
+        // ゲームの状況を表示
+        document.getElementById(
+          "player2Hand"
+        ).textContent = `相手が${player2Hand}なので、`;
+
+        document.getElementById("result").textContent =
+          result === "draw"
+            ? "あいこ"
+            : `${result === "player1" ? "あなた" : "相手"} の勝ち！`;
+
+        // HPを表示
+        displayHP();
+      }
+
+      // 特殊技を使用した時に実行される関数
+      function useSpecial() {
+        // 特殊技をランダムに選択
+        const specialMoves = ["heal", "thunder", "fire", "alien", "happen"];
+        const specialMove =
+          specialMoves[Math.floor(Math.random() * specialMoves.length)];
+
+        // 特殊技に応じた処理を実行
+        switch (specialMove) {
+          case "heal":
+            // プレイヤー1のHPを回復
+            player1Hp += 10;
+            document.getElementById("special").textContent = "HPを回復した";
+            break;
+          case "thunder":
+            // プレイヤー2のHPを減少
+            player2Hp -= 15;
+            document.getElementById("special").textContent = "サンダー！！";
+            break;
+          case "fire":
+            // プレイヤー2のHPを減少
+            player2Hp -= 10;
+            document.getElementById("special").textContent = "ファイア！！";
+            break;
+          case "happen":
+            player1Hp -= 10;
+            document.getElementById("special").textContent =
+              "詠唱中に殴りかかられた！";
+            break;
+          case "alien":
+            // プレイヤー1とプレイヤー2のHPを入れ替え
+            const temp = player1Hp;
+            player1Hp = player2Hp;
+            player2Hp = temp;
+            document.getElementById("special").textContent =
+              "エイリアンが襲来した！HPが入れ替わる！！";
+            break;
+          default:
+            break;
+        }
+
+        // HPが負の値にならないように調整
+        if (player1Hp < 0) {
+          player1Hp = 0;
+        }
+        if (player2Hp < 0) {
+          player2Hp = 0;
+        }
+
+        // HPを表示
+        displayHP();
+      }
+
+      // 勝敗を判定する関数
+      function judgeResult(hand1, hand2) {
+        if (hand1 === hand2) {
+          return "draw";
+        } else if (
+          (hand1 === "✊" && hand2 === "✌") ||
+          (hand1 === "✋" && hand2 === "✊") ||
+          (hand1 === "✌" && hand2 === "✋")
+        ) {
+          return "player1";
+        } else {
+          return "player2";
+        }
+      }
+
+      // HPを更新する関数
+      function updateHP(result) {
+        if (result === "player1") {
+          player2Hp -= 10;
+        } else if (result === "player2") {
+          player1Hp -= 10;
+        }
+      }
+    </script>
+  </body>
+</html>
